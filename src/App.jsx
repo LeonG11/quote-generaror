@@ -1,8 +1,11 @@
-import './App.scss';
+import "./App.scss";
+import Main from "./Pages/Main";
 
 function App() {
   return (
-      <div></div>    
+    <div>
+      <Main />
+    </div>
   );
 }
 
