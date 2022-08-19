@@ -1,67 +1,55 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
-import ajax from "ajax";
-
-function getQuotes() {
-  const url =
-    "https://api.forismatic.com/api/1.0/?method=getQuote&format=jsonp&jsonp=?";
-  ajax({
-    url: url,
-    jsonp: "jsonp",
-    dataType: "jsonp",
-    data: {
-      method: "getQuote",
-      lang: "ru",
-      format: "jsonp",
-    },
-  });
-}
 
 export default function Main() {
+  const [quote, setQuote] = useState("hello");
+  const [author, setAuthor] = useState("world");
+  useEffect(() => {
+    fetch("https://api.quotable.io/random/")
+      .then((response) => response.json())
+      .then((data) => {
+        setQuote(data.content);
+        setAuthor(data.author);
+      });
+  }, []);
+
+  let quotesDataOnClick = () => {
+    fetch("https://api.quotable.io/random/")
+      .then((response) => response.json())
+      .then((data) => {
+        setQuote(data.content);
+        setAuthor(data.author);
+      });
+  };
+
   return (
     <div>
       <div className="quote">
         <div className="quote-text">
           <div className="quote-up-line">
             <FontAwesomeIcon icon={faQuoteLeft} fontSize="2rem" />
-            <span className="quote-s">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Laborum,
-              ratione
-            </span>
+            <span className="quote-s">{quote}</span>
           </div>
           <div className="quote-author">
-            <span id="author">Budda</span>
+            <span id="author">{author}</span>
           </div>
           <div className="button-container">
-            <button className="twitter" title="Tweet This">
-              <FontAwesomeIcon icon={faTwitter} fontSize="1.5rem" />
-            </button>
             <button
-              className="new-quote"
-              onClick={async () => {
-                const url = "https://zenquotes.io/api/quotes/";
-                try {
-                  const response = await fetch(url, {
-                    method: "GET",
-                    headers: {
-                      accept: "application/json",
-                    },
-                  });
-
-                  if (!response.ok) {
-                    throw new Error(`Error! status: ${response.status}`);
-                  }
-
-                  const result = await response.json();
-                  return result;
-                } catch (err) {
-                  console.log(err);
-                }
+              className="twitter"
+              title="Tweet This"
+              onClick={() => {
+                window.open(
+                  `https://twitter.com/intent/tweet?text=${quote} - ${author}`,
+                  "_blank"
+                );
               }}
             >
-              Новая цитата
+              <FontAwesomeIcon icon={faTwitter} fontSize="1.5rem" />
+            </button>
+            <button className="new-quote" onClick={quotesDataOnClick}>
+              New quotes
             </button>
           </div>
         </div>
